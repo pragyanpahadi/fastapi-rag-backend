@@ -17,7 +17,6 @@ def add_message_to_history(session_id: str, role: str, content: str):
     history = get_chat_history(session_id)
     history.append({"role": role, "content": content})
 
-    # Keep only the last 10 messages to optimize context window performance
     if len(history) > 10:
         history = history[-10:]
 
