@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from app.api.routes import ingestion
+from app.core.database import engine, Base
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="RAG Engine API", version="1.0")
 
