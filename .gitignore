@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 qdrant_data/
 pg_data/
+.env
