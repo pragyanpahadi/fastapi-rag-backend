@@ -10,9 +10,12 @@ def generate_embeddings(texts: List[str]) -> List[List[float]]:
         return [[0.1] * 384 for _ in texts]
         
     client = genai.Client(api_key=api_key)
-    response = client.models.embed_content(
-        model="text-embedding-004",
-        contents=texts,
-        config=types.EmbedContentConfig(output_dimensionality=384)
-    )
-    return [emb.values for emb in response.embeddings]
+    vectors = []
+    for text in texts:
+        response = client.models.embed_content(
+            model="text-embedding-004",
+            contents=text,
+            config=types.EmbedContentConfig(output_dimensionality=384)
+        )
+        vectors.append(response.embeddings[0].values)
+    return vectors
