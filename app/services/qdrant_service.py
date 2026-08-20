@@ -1,9 +1,16 @@
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 import uuid
+import os
 from typing import List
 
-client = QdrantClient(host="localhost", port=6333)
+qdrant_url = os.getenv("QDRANT_URL")
+qdrant_api_key = os.getenv("QDRANT_API_KEY")
+
+if qdrant_url:
+    client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+else:
+    client = QdrantClient(host="localhost", port=6333)
 COLLECTION_NAME = "documents"
 
 
