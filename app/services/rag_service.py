@@ -65,7 +65,7 @@ If the user wants to book an interview, extract their Name, Email, Date, and Tim
     messages.append(types.Content(role="user", parts=[types.Part.from_text(text=query)]))
 
     response = await genai_client.aio.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-flash-latest",
         contents=messages,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,

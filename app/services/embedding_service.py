@@ -8,12 +8,12 @@ def generate_embeddings(texts: List[str]) -> List[List[float]]:
     if api_key == "mock-key":
         return [[0.1] * 384 for _ in texts]
         
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent?key={api_key}"
     vectors = []
     
     for text in texts:
         payload = {
-            "model": "models/text-embedding-004",
+            "model": "models/gemini-embedding-2",
             "content": {"parts": [{"text": text}]},
             "outputDimensionality": 384
         }
