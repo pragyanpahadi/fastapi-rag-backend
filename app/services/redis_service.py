@@ -1,9 +1,13 @@
 import redis
 import json
+import os
 from typing import List, Dict
 
-redis_client = redis.Redis(host="localhost", port=6379,
-                           db=0, decode_responses=True)
+redis_url = os.getenv("REDIS_URL")
+if redis_url:
+    redis_client = redis.Redis.from_url(redis_url, decode_responses=True)
+else:
+    redis_client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
 
 def get_chat_history(session_id: str) -> List[Dict[str, str]]:

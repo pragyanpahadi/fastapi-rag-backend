@@ -1,7 +1,8 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "postgresql://admin:secretpassword@localhost:5432/rag_metadata"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://admin:secretpassword@localhost:5432/rag_metadata")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
