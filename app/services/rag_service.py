@@ -48,8 +48,6 @@ async def generate_rag_response(query: str, history: list) -> dict:
             "booking_intent": None
         }
 
-    genai_client = genai.Client(api_key=api_key)
-    
     system_prompt = f"""You are a helpful AI assistant for Palm Mind. 
 Use the following retrieved context to answer the user's question.
 Context:
@@ -57,25 +55,32 @@ Context:
 
 If the user wants to book an interview, extract their Name, Email, Date, and Time."""
 
-    messages = []
+    contents = []
     for msg in history:
         role = "user" if msg["role"] == "user" else "model"
-        messages.append(types.Content(role=role, parts=[types.Part.from_text(text=msg["content"])]))
+        contents.append({"role": role, "parts": [{"text": msg["content"]}]})
     
-    messages.append(types.Content(role="user", parts=[types.Part.from_text(text=query)]))
+    contents.append({"role": "user", "parts": [{"text": query}]})
 
-    response = await genai_client.aio.models.generate_content(
-        model="gemini-3.6-flash",
-        contents=messages,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            response_mime_type="application/json",
-            response_schema=RAGResponse,
-            temperature=0.1
-        )
-    )
+    import requests
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={api_key}"
+    payload = {
+        "systemInstruction": {"parts": [{"text": system_prompt}]},
+        "contents": contents,
+        "generationConfig": {
+            "temperature": 0.1,
+            "responseMimeType": "application/json",
+            "responseSchema": RAGResponse.model_json_schema()
+        }
+    }
 
     try:
-        return json.loads(response.text)
-    except Exception:
-        return {"answer": response.text, "booking_intent": None}
+        res = requests.post(url, json=payload)
+        data = res.json()
+        if "candidates" in data:
+            text_response = data["candidates"][0]["content"]["parts"][0]["text"]
+            return json.loads(text_response)
+        else:
+            return {"answer": f"API Error: {data}", "booking_intent": None}
+    except Exception as e:
+        return {"answer": f"Exception: {str(e)}", "booking_intent": None}
